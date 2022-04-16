@@ -7,7 +7,6 @@ import {
   numberFormat,
   getColorFromTheme,
 } from "./utils";
-import { sendVideoIds } from "./events";
 
 //TODO: Do not duplicate here and in ryd.background.js
 const apiUrl = "https://returnyoutubedislikeapi.com";
@@ -159,9 +158,6 @@ async function setState(storedData) {
 
 function setInitialState() {
   setState(storedData);
-  setTimeout(() => {
-    sendVideoIds();
-  }, 1500);
 }
 
 function initExtConfig() {
