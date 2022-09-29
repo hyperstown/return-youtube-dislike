@@ -612,7 +612,7 @@ function getColorFromTheme(voteIsLike) {
 }
 
 function setEventListeners(evt) {
-  let jsInitChecktimer;
+  let jsInitCheckTimer;
 
   function checkForJS_Finish() {
     //console.log();
@@ -632,12 +632,26 @@ function setEventListeners(evt) {
         window.returnDislikeButtonlistenersSet = true;
       }
       setInitialState();
-      clearInterval(jsInitChecktimer);
+      clearInterval(jsInitCheckTimer);
     }
   }
 
   cLog("Setting up...");
-  jsInitChecktimer = setInterval(checkForJS_Finish, 111);
+  jsInitCheckTimer = setInterval(checkForJS_Finish, 111);
+}
+
+function updateMobileDislikes(){
+  if(getDislikeButton().querySelector(".button-renderer-text") === null){
+    if(getDislikeTextContainer().innerText != mobileDislikes){
+      getDislikeTextContainer().innerText = mobileDislikes;
+    }
+  }
+  else{
+    let brText = getDislikeButton().querySelector(".button-renderer-text");
+    if(brText.innerText != mobileDislikes){
+      brText.innerText = mobileDislikes;
+    }
+  }
 }
 
 (function () {
@@ -653,12 +667,15 @@ if (isMobile) {
     return originalPush.apply(history, args);
   };
   setInterval(() => {
-    if(getDislikeButton().querySelector(".button-renderer-text") === null){
-      getDislikeTextContainer().innerText = mobileDislikes;
-    }
-    else{
-      getDislikeButton().querySelector(".button-renderer-text").innerText =
-        mobileDislikes;
-    }
+    try {
+      updateMobileDislikes();
+    } catch {return;} //Don't spam errors into the console
   }, 1000);
+
+
+  addEventListener('DOMSubtreeModified', (e) => {
+    try {
+      updateMobileDislikes();
+    } catch {return;} //Don't spam errors into the console
+  })
 }
