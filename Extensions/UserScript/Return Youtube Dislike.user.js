@@ -669,11 +669,11 @@ if (isMobile) {
     setEventListeners(args[2]);
     return originalPush.apply(history, args);
   };
-  // setInterval(() => {
-  //   try {
-  //     updateMobileDislikes();
-  //   } catch {return;} //Don't spam errors into the console
-  // }, 1000);
+  setInterval(() => {
+    try {
+      updateMobileDislikes();
+    } catch {return;} //Don't spam errors into the console
+  }, 10000);
 
 
   // addEventListener('DOMSubtreeModified', (e) => {
