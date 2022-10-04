@@ -615,6 +615,20 @@ function getColorFromTheme(voteIsLike) {
   return colorString;
 }
 
+function updateMobileDislikes(){
+  if(getDislikeButton().querySelector(".button-renderer-text") === null){
+    if(getDislikeTextContainer().innerText != mobileDislikes){
+      getDislikeTextContainer().innerText = mobileDislikes;
+    }
+  }
+  else{
+    let brText = getDislikeButton().querySelector(".button-renderer-text");
+    if(brText.innerText != mobileDislikes){
+      brText.innerText = mobileDislikes;
+    }
+  }
+}
+
 function setEventListeners(evt) {
   let jsInitCheckTimer;
 
@@ -630,32 +644,22 @@ function setEventListeners(evt) {
           buttons.children[1].addEventListener("click", dislikeClicked);
           buttons.children[0].addEventListener("touchstart", likeClicked);
           buttons.children[1].addEventListener("touchstart", dislikeClicked);
+          buttons.children[1].addEventListener("DOMSubtreeModified", updateMobileDislikes);
         } catch {
           return;
         } //Don't spam errors into the console
         window.returnDislikeButtonlistenersSet = true;
       }
       setInitialState();
+      if(isMobile){
+        updateMobileDislikes();
+      }
       clearInterval(jsInitCheckTimer);
     }
   }
 
   cLog("Setting up...");
   jsInitCheckTimer = setInterval(checkForJS_Finish, 111);
-}
-
-function updateMobileDislikes(){
-  if(getDislikeButton().querySelector(".button-renderer-text") === null){
-    if(getDislikeTextContainer().innerText != mobileDislikes){
-      getDislikeTextContainer().innerText = mobileDislikes;
-    }
-  }
-  else{
-    let brText = getDislikeButton().querySelector(".button-renderer-text");
-    if(brText.innerText != mobileDislikes){
-      brText.innerText = mobileDislikes;
-    }
-  }
 }
 
 (function () {
@@ -670,16 +674,16 @@ if (isMobile) {
     setEventListeners(args[2]);
     return originalPush.apply(history, args);
   };
-  setInterval(() => {
-    try {
-      updateMobileDislikes();
-    } catch {return;} //Don't spam errors into the console
-  }, 1000);
+  // setInterval(() => {
+  //   try {
+  //     updateMobileDislikes();
+  //   } catch {return;} //Don't spam errors into the console
+  // }, 1000);
 
 
-  addEventListener('DOMSubtreeModified', (e) => {
-    try {
-      updateMobileDislikes();
-    } catch {return;} //Don't spam errors into the console
-  })
+  // addEventListener('DOMSubtreeModified', (e) => {
+  //   try {
+  //     updateMobileDislikes();
+  //   } catch {return;} //Don't spam errors into the console
+  // })
 }
