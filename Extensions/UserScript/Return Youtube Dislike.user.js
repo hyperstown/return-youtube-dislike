@@ -385,58 +385,56 @@ function createRateBar(likes, dislikes) {
   }
 }
 
-function setState() {
+async function setState() {
   cLog("Fetching votes...");
   let statsSet = false;
+  const url = `https://returnyoutubedislikeapi.com/votes?videoId=${getVideoId()}`
 
-  fetch(
-    `https://returnyoutubedislikeapi.com/votes?videoId=${getVideoId()}`
-  ).then((response) => {
-    response.json().then((json) => {
-      if (json && !("traceId" in response) && !statsSet) {
-        const { dislikes, likes } = json;
-        cLog(`Received count: ${dislikes}`);
-        likesvalue = likes;
-        dislikesvalue = dislikes;
-        setDislikes(numberFormat(dislikes));
-        if (extConfig.numberDisplayReformatLikes === true) {
-          const nativeLikes = getLikeCountFromButton();
-          if (nativeLikes !== false) {
-            setLikes(numberFormat(nativeLikes));
-          }
-        }
-        createRateBar(likes, dislikes);
-        if (extConfig.coloredThumbs === true) {
-          if (isShorts()) {
-            // for shorts, leave deactived buttons in default color
-            let shortLikeButton = getLikeButton().querySelector(
-              "tp-yt-paper-button#button"
-            );
-            let shortDislikeButton = getDislikeButton().querySelector(
-              "tp-yt-paper-button#button"
-            );
-            if (shortLikeButton.getAttribute("aria-pressed") === "true") {
-              shortLikeButton.style.color = getColorFromTheme(true);
-            }
-            if (shortDislikeButton.getAttribute("aria-pressed") === "true") {
-              shortDislikeButton.style.color = getColorFromTheme(false);
-            }
-            mutationObserver.observer.observe(
-              shortLikeButton,
-              mutationObserver.options
-            );
-            mutationObserver.observer.observe(
-              shortDislikeButton,
-              mutationObserver.options
-            );
-          } else {
-            getLikeButton().style.color = getColorFromTheme(true);
-            getDislikeButton().style.color = getColorFromTheme(false);
-          }
-        }
+  const response = await fetch(url); // fetch headers
+  const json = await response.json(); // fetch body 
+
+  if (json && !("traceId" in response) && !statsSet) {
+    const { dislikes, likes } = json;
+    cLog(`Received count: ${dislikes}`);
+    likesvalue = likes;
+    dislikesvalue = dislikes;
+    setDislikes(numberFormat(dislikes));
+    if (extConfig.numberDisplayReformatLikes === true) {
+      const nativeLikes = getLikeCountFromButton();
+      if (nativeLikes !== false) {
+        setLikes(numberFormat(nativeLikes));
       }
-    });
-  });
+    }
+    createRateBar(likes, dislikes);
+    if (extConfig.coloredThumbs === true) {
+      if (isShorts()) {
+        // for shorts, leave deactived buttons in default color
+        let shortLikeButton = getLikeButton().querySelector(
+          "tp-yt-paper-button#button"
+        );
+        let shortDislikeButton = getDislikeButton().querySelector(
+          "tp-yt-paper-button#button"
+        );
+        if (shortLikeButton.getAttribute("aria-pressed") === "true") {
+          shortLikeButton.style.color = getColorFromTheme(true);
+        }
+        if (shortDislikeButton.getAttribute("aria-pressed") === "true") {
+          shortDislikeButton.style.color = getColorFromTheme(false);
+        }
+        mutationObserver.observer.observe(
+          shortLikeButton,
+          mutationObserver.options
+        );
+        mutationObserver.observer.observe(
+          shortDislikeButton,
+          mutationObserver.options
+        );
+      } else {
+        getLikeButton().style.color = getColorFromTheme(true);
+        getDislikeButton().style.color = getColorFromTheme(false);
+      }
+    }
+  }
 }
 
 function likeClicked() {
@@ -492,10 +490,6 @@ function dislikeClicked() {
       }
     }
   }
-}
-
-function setInitialState() {
-  setState();
 }
 
 function getVideoId() {
@@ -633,7 +627,6 @@ function setEventListeners(evt) {
   let jsInitCheckTimer;
 
   function checkForJS_Finish() {
-    //console.log();
     if (isShorts() || (getButtons()?.offsetParent && isVideoLoaded())) {
       const buttons = getButtons();
 
@@ -650,10 +643,12 @@ function setEventListeners(evt) {
         } //Don't spam errors into the console
         window.returnDislikeButtonlistenersSet = true;
       }
-      setInitialState();
-      if(isMobile){
-        updateMobileDislikes();
-      }
+      
+      setState().then(() => {
+        if(isMobile){
+          updateMobileDislikes();
+        };
+      })
       clearInterval(jsInitCheckTimer);
     }
   }
