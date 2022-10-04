@@ -673,7 +673,7 @@ if (isMobile) {
     try {
       updateMobileDislikes();
     } catch {return;} //Don't spam errors into the console
-  }, 10000);
+  }, 2000); // for some reason dislike count disappears randomly - update every 2s
 
 
   // addEventListener('DOMSubtreeModified', (e) => {
