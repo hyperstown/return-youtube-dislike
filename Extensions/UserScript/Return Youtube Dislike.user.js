@@ -83,6 +83,7 @@ function getButtons() {
   }
   if (isMobile) {
     return (
+      document.querySelector('.fullscreen-action-menu .action-menu-engagement-buttons-wrapper') ??
       document.querySelector(".slim-video-action-bar-actions .segmented-buttons") ??
       document.querySelector(".slim-video-action-bar-actions")
     );
@@ -623,6 +624,27 @@ function updateMobileDislikes(){
   }
 }
 
+
+function fullscreenDislikeButtons(){
+  if(document.fullscreenElement){
+    setTimeout(() => {
+      const buttonsFullscreen = getButtons();
+      getDislikeTextContainer().innerText = mobileDislikes;
+      buttonsFullscreen.children[1].addEventListener('DOMSubtreeModified', () => {
+        // const isOverLayVisible = document.getElementById("player-control-overlay").classList.contains('fadein');
+        // if(isOverLayVisible){
+        //   updateMobileDislikes();
+        // }
+        try{
+          updateMobileDislikes();
+        }
+        catch {}
+        
+      })
+    }, 1000);
+  }
+}
+
 function setEventListeners(evt) {
   let jsInitCheckTimer;
 
@@ -637,7 +659,14 @@ function setEventListeners(evt) {
           buttons.children[1].addEventListener("click", dislikeClicked);
           buttons.children[0].addEventListener("touchstart", likeClicked);
           buttons.children[1].addEventListener("touchstart", dislikeClicked);
-          buttons.children[1].addEventListener("DOMSubtreeModified", updateMobileDislikes);
+          if(isShorts()){
+            buttons.children[1].addEventListener("DOMSubtreeModified", updateMobileDislikes);
+          }
+          else {
+            buttons.addEventListener("DOMSubtreeModified", updateMobileDislikes);
+          }
+          addEventListener('fullscreenchange', fullscreenDislikeButtons);
+          document.getElementById('player-control-overlay').style.userSelect = 'none';
         } catch {
           return;
         } //Don't spam errors into the console
@@ -675,10 +704,4 @@ if (isMobile) {
     } catch {return;} //Don't spam errors into the console
   }, 2000); // for some reason dislike count disappears randomly - update every 2s
 
-
-  // addEventListener('DOMSubtreeModified', (e) => {
-  //   try {
-  //     updateMobileDislikes();
-  //   } catch {return;} //Don't spam errors into the console
-  // })
 }
