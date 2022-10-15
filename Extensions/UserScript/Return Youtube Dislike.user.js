@@ -631,14 +631,14 @@ function fullscreenDislikeButtons(){
       const buttonsFullscreen = getButtons();
       getDislikeTextContainer().innerText = mobileDislikes;
       buttonsFullscreen.children[1].addEventListener('DOMSubtreeModified', () => {
-        // const isOverLayVisible = document.getElementById("player-control-overlay").classList.contains('fadein');
-        // if(isOverLayVisible){
-        //   updateMobileDislikes();
-        // }
-        try{
+        const isOverLayVisible = document.getElementById("player-control-overlay").classList.contains('fadein');
+        if(isOverLayVisible){
           updateMobileDislikes();
         }
-        catch {}
+        // try{
+        //   updateMobileDislikes();
+        // }
+        // catch {}
         
       })
     }, 1000);
