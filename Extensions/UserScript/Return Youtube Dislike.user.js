@@ -630,18 +630,19 @@ function fullscreenDislikeButtons(){
     setTimeout(() => {
       const buttonsFullscreen = getButtons();
       getDislikeTextContainer().innerText = mobileDislikes;
-      buttonsFullscreen.children[1].addEventListener('DOMSubtreeModified', () => {
-        const isOverLayVisible = document.getElementById("player-control-overlay").classList.contains('fadein');
-        if(isOverLayVisible){
+      buttonsFullscreen.children[1].addEventListener('DOMSubtreeModified', (e) => {
+        let updateValue = false;
+        try{
+          updateValue = e.target.nodeName == "#text";
+        }
+        catch (e) {/*console.error(e)*/}
+        
+        if(updateValue){
           updateMobileDislikes();
         }
-        // try{
-        //   updateMobileDislikes();
-        // }
-        // catch {}
-        
       })
-    }, 1000);
+    }, 700); // wait for fullscreen ui
+    // far from best solution but it works
   }
 }
 
@@ -666,8 +667,8 @@ function setEventListeners(evt) {
             buttons.addEventListener("DOMSubtreeModified", updateMobileDislikes);
           }
           addEventListener('fullscreenchange', fullscreenDislikeButtons);
-          document.getElementById('player-control-overlay').style.userSelect = 'none';
-        } catch {
+        } catch (e){
+          //console.error(e);
           return;
         } //Don't spam errors into the console
         window.returnDislikeButtonlistenersSet = true;
