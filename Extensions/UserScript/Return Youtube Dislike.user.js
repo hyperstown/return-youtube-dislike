@@ -629,18 +629,22 @@ function fullscreenDislikeButtons(){
   if(document.fullscreenElement){
     setTimeout(() => {
       const buttonsFullscreen = getButtons();
-      getDislikeTextContainer().innerText = mobileDislikes;
-      buttonsFullscreen.children[1].addEventListener('DOMSubtreeModified', (e) => {
-        let updateValue = false;
-        try{
-          updateValue = e.target.nodeName == "#text";
-        }
-        catch (e) {/*console.error(e)*/}
-        
-        if(updateValue){
-          updateMobileDislikes();
-        }
-      })
+      const dislikeTextContainer = buttonsFullscreen.children[1]
+        .querySelector("span[role='text']") // it should work only in new design!
+      if(dislikeTextContainer !== null){
+        getDislikeTextContainer().innerText = mobileDislikes;
+        buttonsFullscreen.children[1].addEventListener('DOMSubtreeModified', (e) => {
+          let updateValue = false;
+          try{
+            updateValue = e.target.nodeName == "#text";
+          }
+          catch (e) {/*console.error(e)*/}
+          
+          if(updateValue){
+            updateMobileDislikes();
+          }
+        })
+      }
     }, 700); // wait for fullscreen ui
     // far from best solution but it works
   }
