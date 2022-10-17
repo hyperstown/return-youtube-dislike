@@ -664,14 +664,14 @@ function setEventListeners(evt) {
           buttons.children[1].addEventListener("click", dislikeClicked);
           buttons.children[0].addEventListener("touchstart", likeClicked);
           buttons.children[1].addEventListener("touchstart", dislikeClicked);
-          if(isShorts()){
+          if(isShorts() && isMobile){
             buttons.children[1].addEventListener("DOMSubtreeModified", updateMobileDislikes);
           }
-          else {
+          else if (isMobile){
             buttons.addEventListener("DOMSubtreeModified", updateMobileDislikes);
           }
           addEventListener('fullscreenchange', fullscreenDislikeButtons);
-          fullscreenDislikeButtons(); // init dislike when fullscreen > fullscreen
+          fullscreenDislikeButtons(); // init dislike when fullscreen >
         } catch (e){
           //console.error(e);
           return;
