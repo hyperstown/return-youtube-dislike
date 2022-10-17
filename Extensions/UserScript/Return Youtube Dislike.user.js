@@ -671,6 +671,7 @@ function setEventListeners(evt) {
             buttons.addEventListener("DOMSubtreeModified", updateMobileDislikes);
           }
           addEventListener('fullscreenchange', fullscreenDislikeButtons);
+          fullscreenDislikeButtons(); // init dislike when fullscreen > fullscreen
         } catch (e){
           //console.error(e);
           return;
